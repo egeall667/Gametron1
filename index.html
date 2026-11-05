@@ -1,0 +1,996 @@
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mini Oyun Evreni 🚀</title>
+<style>
+:root{
+ --bg:#0b1020;--panel:#151e35;--panel2:#202d49;
+ --purple:#956aff;--pink:#ff58ae;--cyan:#35d9ef;
+ --text:#f5f5ff;--muted:#aab5d0;
+}
+*{box-sizing:border-box}
+body{
+ margin:0;background:var(--bg);color:var(--text);
+ font-family:Arial,sans-serif;
+ background-image:radial-gradient(ellipse at top,#28204c,transparent 60%);
+ min-height:100vh
+}
+button,input,select{font:inherit;border:0;border-radius:11px;padding:12px}
+button{cursor:pointer;font-weight:bold;transition:.2s}
+button:hover{transform:translateY(-2px);filter:brightness(1.15)}
+input,select{background:#263653;color:white;max-width:100%}
+header{
+ position:sticky;top:0;z-index:10;background:#0b1020ed;
+ backdrop-filter:blur(12px);padding:14px 4%;
+ display:flex;justify-content:space-between;align-items:center;
+ gap:12px;border-bottom:1px solid #ffffff18;flex-wrap:wrap
+}
+.logo{font-size:22px;font-weight:900;cursor:pointer}
+.logo span{color:#b397ff}
+nav{display:flex;gap:7px;flex-wrap:wrap}
+.navbtn{background:#202b46;color:white;padding:10px}
+.primary{background:linear-gradient(100deg,#8055ff,#e54ca9);color:white}
+.secondary{background:#293956;color:white}
+.danger{background:#a92750;color:white}
+.gold{background:linear-gradient(100deg,#bd851d,#f4c44d);color:#241600}
+main{max-width:1150px;margin:auto;padding:25px 18px}
+section{animation:appear .25s}
+@keyframes appear{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.hidden{display:none!important}
+.hero{
+ text-align:center;padding:45px 20px;border-radius:24px;
+ background:linear-gradient(130deg,#28204e,#182c4c);
+ border:1px solid #ffffff20
+}
+.hero h1{font-size:clamp(32px,6vw,55px);margin:0 0 12px}
+.hero h1 span{color:#b99aff}
+.hero p,.muted{color:var(--muted)}
+.stats{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin:22px 0}
+.stat{background:#ffffff12;padding:13px 18px;border-radius:14px}
+.stat b{color:#c6adff}
+.title{font-size:25px;margin:32px 0 16px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:15px}
+.card,.panel{
+ background:var(--panel);border:1px solid #ffffff15;
+ border-radius:18px;padding:20px
+}
+.card{transition:.2s}
+.card:hover{transform:translateY(-4px);border-color:#956aff88}
+.card h3{margin:10px 0}
+.card p{color:var(--muted);font-size:14px;min-height:32px}
+.emoji{font-size:37px}
+.card button{width:100%;margin-top:8px}
+.badge{
+ display:inline-block;background:#33274e;color:#ddcaff;
+ padding:8px 12px;border-radius:30px;margin:4px
+}
+.progress{height:10px;background:#293956;border-radius:20px;overflow:hidden}
+.progress div{height:100%;background:linear-gradient(90deg,#9164ff,#ff5caa)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.row>*{flex:1}
+.full{width:100%}
+.center{text-align:center}
+.big{font-size:45px;font-weight:bold;margin:18px}
+.result{
+ background:#111629;padding:20px;border-radius:15px;
+ margin:15px 0;line-height:1.6
+}
+#roastCard{background:linear-gradient(135deg,#40172f,#1b1d39)}
+#roastText{font-size:21px}
+#roastName{width:100%;margin:10px 0}
+#gameModal{
+ position:fixed;inset:0;z-index:30;background:#050711ed;
+ display:flex;align-items:center;justify-content:center;padding:15px
+}
+.modalbox{
+ width:min(650px,100%);max-height:90vh;overflow:auto;
+ background:#151e35;border:1px solid #956aff88;border-radius:22px;padding:23px
+}
+.modalhead{display:flex;justify-content:space-between;align-items:center}
+#gameArea{text-align:center;padding:15px 0;min-height:130px}
+#gameMessage{color:#c8b3ff;min-height:25px}
+footer{text-align:center;padding:30px;color:#75819c}
+.avatar{font-size:65px}
+.shop-item{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.shop-item button{white-space:nowrap}
+.wheel{
+ width:210px;height:210px;border-radius:50%;margin:20px auto;
+ background:conic-gradient(#ff5caa 0 45deg,#956aff 45deg 90deg,
+ #35d9ef 90deg 135deg,#e8ae39 135deg 180deg,
+ #ff5caa 180deg 225deg,#956aff 225deg 270deg,
+ #35d9ef 270deg 315deg,#e8ae39 315deg);
+ border:8px solid #fff;box-shadow:0 0 25px #956aff77;
+ display:flex;align-items:center;justify-content:center;
+ font-size:45px;transition:transform 2.5s cubic-bezier(.15,.7,.15,1)
+}
+table{width:100%;border-collapse:collapse}
+td,th{padding:11px;text-align:left;border-bottom:1px solid #ffffff18}
+.small{font-size:12px;color:var(--muted)}
+#toast{
+ position:fixed;bottom:20px;left:50%;transform:translateX(-50%);
+ z-index:50;background:#293956;color:white;padding:13px 22px;
+ border-radius:12px;display:none;box-shadow:0 5px 25px #0008
+}
+@media(max-width:650px){
+ header{align-items:flex-start;flex-direction:column}
+ nav{width:100%}
+ nav button{flex:1}
+ .hero{padding:32px 13px}
+}
+</style>
+</head>
+<body>
+
+<header>
+ <div class="logo" onclick="home()">🚀 Mini Oyun <span>Evreni</span></div>
+ <nav>
+  <button class="navbtn" onclick="home()">🏠</button>
+  <button class="navbtn" onclick="page('games')">🎮 Oyunlar</button>
+  <button class="navbtn" onclick="page('roast')">💀 Roast</button>
+  <button class="navbtn" onclick="page('rewards')">🎁 Ödüller</button>
+  <button class="navbtn" onclick="page('profile')">👤 Profil</button>
+  <button class="navbtn" onclick="page('more')">✨ Daha Fazla</button>
+ </nav>
+</header>
+
+<main>
+
+<!-- ANA SAYFA -->
+<section id="home">
+ <div class="hero">
+  <h1>Mini Oyun <span>Evreni</span> 🚀</h1>
+  <p>Oyna, kazan, geliş ve kendi efsaneni oluştur!</p>
+  <div class="stats">
+   <div class="stat">⭐ XP: <b id="xp">0</b></div>
+   <div class="stat">🏆 Seviye: <b id="level">1</b></div>
+   <div class="stat">🎮 Oyun: <b id="played">0</b></div>
+   <div class="stat">🪙 Para: <b id="coins">0</b></div>
+  </div>
+  <button class="primary" onclick="page('games')">OYUNLARA BAŞLA 🎮</button>
+  <button class="gold" onclick="page('rewards')">GÜNLÜK ÖDÜL 🎁</button>
+ </div>
+
+ <h2 class="title">🔥 Öne Çıkanlar</h2>
+ <div class="grid">
+  <div class="card" id="roastCard">
+   <div class="emoji">💀🔥</div><h3>ROAST ARENASI</h3>
+   <p>Seviye 3 acımasız roastlar!</p>
+   <button class="primary" onclick="page('roast')">ARENA'YA GİR</button>
+  </div>
+  <div class="card">
+   <div class="emoji">🎁</div><h3>Ödül Sandığı</h3>
+   <p>Günlük hediyeni al.</p>
+   <button class="gold" onclick="page('rewards')">SANDIĞI AÇ</button>
+  </div>
+  <div class="card">
+   <div class="emoji">🛒</div><h3>XP Marketi</h3>
+   <p>XP harca, profilini özelleştir.</p>
+   <button class="primary" onclick="page('shop')">MARKETE GİR</button>
+  </div>
+  <div class="card">
+   <div class="emoji">⚔️</div><h3>Düello</h3>
+   <p>Arkadaşına karşı yarış.</p>
+   <button class="primary" onclick="page('duel')">DÜELLO BAŞLAT</button>
+  </div>
+ </div>
+
+ <h2 class="title">📜 Günlük Görevlerin</h2>
+ <div class="panel" id="homeQuests"></div>
+
+ <h2 class="title">⭐ Seviye İlerlemesi</h2>
+ <div class="panel">
+  <div class="progress"><div id="xpBar" style="width:0%"></div></div>
+  <p id="xpText" class="muted">0 / 100 XP</p>
+ </div>
+</section>
+
+<!-- OYUNLAR -->
+<section id="games" class="hidden">
+ <h1>🎮 Oyun Merkezi</h1>
+ <p class="muted">Oyun seç, XP kazan!</p>
+ <input id="search" class="full" placeholder="🔎 Oyun ara..." oninput="filterGames()">
+ <div class="grid" id="gameGrid"></div>
+</section>
+
+<!-- ROAST -->
+<section id="roast" class="hidden">
+ <div class="hero" style="background:linear-gradient(130deg,#46152e,#24152f)">
+  <h1>💀 ROAST <span>ARENASI</span></h1>
+  <p>Seviye 3: Acımasız mod!</p>
+  <span class="badge">🔥 LEVEL 3</span>
+ </div>
+ <div class="panel center" style="margin-top:20px">
+  <h2>Kimi roastlıyoruz?</h2>
+  <input id="roastName" placeholder="İsim yaz (boş bırakırsan Sen)">
+  <button class="primary" style="font-size:23px;padding:17px 35px" onclick="roast()">🔥 ROAST ET!</button>
+  <div class="result" id="roastResult">
+   <h3>💀 ROAST GELİYOR!</h3>
+   <p id="roastText"></p>
+   <button class="secondary" onclick="copyRoast()">📋 Kopyala</button>
+   <button class="primary" onclick="roast()">🔄 Tekrar roastla</button>
+  </div>
+ </div>
+</section>
+
+<!-- ÖDÜLLER -->
+<section id="rewards" class="hidden">
+ <h1>🎁 Günlük Ödüller</h1>
+ <div class="grid">
+  <div class="card center">
+   <div class="emoji">🎁</div><h2>Günlük Sandık</h2>
+   <p>Her gün bir kez ücretsiz ödül kazan!</p>
+   <button class="gold" id="chestBtn" onclick="openChest()">SANDIĞI AÇ</button>
+   <div id="chestResult" class="result hidden"></div>
+  </div>
+  <div class="card center">
+   <div class="emoji">🎡</div><h2>Şans Çarkı</h2>
+   <p>Her gün çarkı bir kez çevir!</p>
+   <div class="wheel" id="wheel">🎁</div>
+   <button class="primary" id="wheelBtn" onclick="spinWheel()">ÇARKI ÇEVİR!</button>
+   <div id="wheelResult" class="result"></div>
+  </div>
+ </div>
+</section>
+
+<!-- LİDERLİK -->
+<section id="leaderboard" class="hidden">
+ <h1>🏆 Liderlik Tablosu</h1>
+ <div class="panel">
+  <p class="muted">Bu cihazda kaydedilen oyuncuların sıralaması.</p>
+  <table>
+   <thead><tr><th>Sıra</th><th>Oyuncu</th><th>XP</th><th>Seviye</th></tr></thead>
+   <tbody id="leaderRows"></tbody>
+  </table>
+  <p class="small">Not: Bu liste çevrimiçi değildir. Başka cihazlardaki oyuncuları göstermez.</p>
+ </div>
+ <div class="panel">
+  <h3>Oyuncu adını değiştir</h3>
+  <input id="playerName" placeholder="Oyuncu adın">
+  <button class="primary" onclick="changeName()">Kaydet</button>
+ </div>
+</section>
+
+<!-- ROZETLER -->
+<section id="badges" class="hidden">
+ <h1>🏅 Rozet Koleksiyonu</h1>
+ <p class="muted">Görevleri tamamla ve koleksiyonunu büyüt.</p>
+ <div class="grid" id="badgeGrid"></div>
+</section>
+
+<!-- MARKET -->
+<section id="shop" class="hidden">
+ <h1>🛒 XP Marketi</h1>
+ <div class="panel">
+  <h3>⭐ Bakiyen: <span id="shopXP">0</span> XP</h3>
+  <p class="muted">XP harcayarak profil eşyaları al.</p>
+ </div>
+ <div class="grid" id="shopGrid"></div>
+</section>
+
+<!-- GİZLİ GÖREVLER -->
+<section id="secret" class="hidden">
+ <div class="hero">
+  <h1>🕵️ Gizli Görevler</h1>
+  <p>Her sırrı herkes keşfedemez...</p>
+ </div>
+ <div class="grid" style="margin-top:20px">
+  <div class="card">
+   <div class="emoji">🔐</div><h3>Gizli Kod</h3>
+   <p>Gizli kodu biliyor musun?</p>
+   <input id="secretCode" placeholder="Kodu yaz">
+   <button class="primary" onclick="checkSecret()">KONTROL ET</button>
+  </div>
+  <div class="card">
+   <div class="emoji">🔍</div><h3>Sayfaları Keşfet</h3>
+   <p>Mini Oyun Evreni'nin bütün bölümlerini keşfet.</p>
+   <button class="secondary" onclick="checkExplore()">Kontrol et</button>
+  </div>
+  <div class="card">
+   <div class="emoji">💀</div><h3>Roast Ustası</h3>
+   <p>Roast Arenası'nda 5 roast üret.</p>
+   <button class="secondary" onclick="checkRoastQuest()">Kontrol et</button>
+  </div>
+ </div>
+ <div class="panel" id="secretMessage">Sırlar seni bekliyor...</div>
+</section>
+
+<!-- AVATAR -->
+<section id="avatar" class="hidden">
+ <h1>👤 Avatar Düzenleyici</h1>
+ <div class="panel center">
+  <div class="avatar" id="avatarPreview">😎</div>
+  <h2 id="avatarName">Oyuncu</h2>
+  <p>Karakterini seç!</p>
+  <div class="grid" id="avatarOptions"></div>
+  <button class="primary" onclick="saveAvatar()">AVATARI KAYDET</button>
+ </div>
+</section>
+
+<!-- DÜELLO -->
+<section id="duel" class="hidden">
+ <div class="hero">
+  <h1>⚔️ DÜELLO ARENASI</h1>
+  <p>Arkadaşınla aynı cihazda sırayla yarış!</p>
+ </div>
+ <div class="panel" style="margin-top:20px">
+  <h2>Oyuncuları belirle</h2>
+  <div class="row">
+   <input id="duelP1" value="Oyuncu 1">
+   <input id="duelP2" value="Oyuncu 2">
+  </div>
+  <button class="primary full" onclick="startDuel()">DÜELLOYU BAŞLAT</button>
+  <div id="duelArea" class="center"></div>
+ </div>
+</section>
+
+<!-- GÖREVLER -->
+<section id="quests" class="hidden">
+ <h1>📜 Günlük Görevler</h1>
+ <p class="muted">Her gün yeni görevler ve XP ödülleri!</p>
+ <div class="panel" id="questList"></div>
+</section>
+
+<!-- CEO -->
+<section id="ceo" class="hidden">
+ <div class="hero">
+  <h1>👑 CEO PANELİ</h1>
+  <p>Mini Oyun Evreni yönetim merkezi</p>
+ </div>
+ <div class="panel" style="margin-top:20px">
+  <h2>Yönetici araçları</h2>
+  <p class="muted">Bu panel yalnızca bu tarayıcıdaki site verilerini yönetir.</p>
+  <div class="grid">
+   <div class="card">
+    <h3>⭐ XP Ekle</h3>
+    <input id="adminXP" type="number" placeholder="XP miktarı">
+    <button class="primary" onclick="adminAddXP()">XP EKLE</button>
+   </div>
+   <div class="card">
+    <h3>📢 Duyuru</h3>
+    <input id="announcementInput" placeholder="Duyuru yaz">
+    <button class="primary" onclick="setAnnouncement()">YAYINLA</button>
+   </div>
+   <div class="card">
+    <h3>🎮 Site İstatistikleri</h3>
+    <p id="adminStats"></p>
+   </div>
+   <div class="card">
+    <h3>🧹 Kayıtları Sıfırla</h3>
+    <p>Bu işlem yerel kayıtlarını siler.</p>
+    <button class="danger" onclick="resetData()">VERİLERİ SIFIRLA</button>
+   </div>
+  </div>
+ </div>
+</section>
+
+<!-- DAHA FAZLA -->
+<section id="more" class="hidden">
+ <h1>✨ Daha Fazla</h1>
+ <div class="grid">
+  <div class="card"><div class="emoji">🏆</div><h3>Liderlik Tablosu</h3><button class="primary" onclick="page('leaderboard')">AÇ</button></div>
+  <div class="card"><div class="emoji">🏅</div><h3>Rozet Koleksiyonu</h3><button class="primary" onclick="page('badges')">AÇ</button></div>
+  <div class="card"><div class="emoji">🕵️</div><h3>Gizli Görevler</h3><button class="primary" onclick="page('secret')">AÇ</button></div>
+  <div class="card"><div class="emoji">👤</div><h3>Avatar Düzenleyici</h3><button class="primary" onclick="page('avatar')">AÇ</button></div>
+  <div class="card"><div class="emoji">📜</div><h3>Günlük Görevler</h3><button class="primary" onclick="page('quests')">AÇ</button></div>
+  <div class="card"><div class="emoji">👑</div><h3>CEO Paneli</h3><button class="gold" onclick="openCEO()">GİRİŞ</button></div>
+  <div class="card"><div class="emoji">🛒</div><h3>XP Marketi</h3><button class="primary" onclick="page('shop')">AÇ</button></div>
+  <div class="card"><div class="emoji">⚔️</div><h3>Düello</h3><button class="primary" onclick="page('duel')">AÇ</button></div>
+ </div>
+</section>
+
+</main>
+
+<div id="gameModal" class="hidden">
+ <div class="modalbox">
+  <div class="modalhead">
+   <h2 id="gameTitle">Oyun</h2>
+   <button class="danger" onclick="closeGame()">✖</button>
+  </div>
+  <div id="gameArea"></div>
+  <p id="gameMessage"></p>
+ </div>
+</div>
+<div id="toast"></div>
+<footer>© 2026 Mini Oyun Evreni · Tüm hakları saklıdır. 🚀</footer>
+
+<script>
+// ===================================
+// KAYIT SİSTEMİ
+// ===================================
+const KEY='miniOyunEvreni_v3';
+const today=()=>new Date().toLocaleDateString('en-CA');
+const defaultData={
+ xp:0,coins:0,played:0,name:'Oyuncu',avatar:'😎',
+ owned:[],badges:[],roasts:0,explored:[],
+ chestDate:'',wheelDate:'',questsDate:'',
+ questProgress:{},announcement:'',labUnlocked:false
+};
+let data;
+try{
+ data={...defaultData,...JSON.parse(localStorage.getItem(KEY)||'{}')};
+}catch(e){data={...defaultData}}
+let gameTimer=null,gameData={},currentGame='';
+let roastLast='',wheelBusy=false,duel=null;
+
+function save(){
+ try{localStorage.setItem(KEY,JSON.stringify(data))}
+ catch(e){toast('Kayıt yapılamadı!')}
+ updateStats();
+}
+function toast(msg){
+ const el=document.getElementById('toast');
+ el.textContent=msg;el.style.display='block';
+ clearTimeout(window.toastTimer);
+ window.toastTimer=setTimeout(()=>el.style.display='none',2500);
+}
+function home(){page('home')}
+const pages=['home','games','roast','rewards','leaderboard','badges','shop','secret','avatar','duel','quests','ceo','more'];
+function page(id){
+ pages.forEach(p=>document.getElementById(p).classList.add('hidden'));
+ document.getElementById(id).classList.remove('hidden');
+ if(id==='leaderboard')renderLeaderboard();
+ if(id==='badges')renderBadges();
+ if(id==='shop')renderShop();
+ if(id==='avatar')renderAvatars();
+ if(id==='quests')renderQuests();
+ if(id==='home')renderHomeQuests();
+ if(id==='ceo')renderAdminStats();
+ if(id==='rewards')updateRewardButtons();
+ window.scrollTo({top:0,behavior:'smooth'});
+ if(id!=='home'&&!data.explored.includes(id)){
+  data.explored.push(id);save();
+ }
+}
+function updateStats(){
+ let level=Math.floor(data.xp/100)+1;
+ let progress=data.xp%100;
+ document.getElementById('xp').textContent=data.xp;
+ document.getElementById('coins').textContent=data.coins;
+ document.getElementById('level').textContent=level;
+ document.getElementById('played').textContent=data.played;
+ document.getElementById('xpBar').style.width=progress+'%';
+ document.getElementById('xpText').textContent=progress+' / 100 XP';
+ document.getElementById('shopXP').textContent=data.xp;
+ document.getElementById('avatarName').textContent=data.name;
+}
+function addXP(n){
+ if(n<=0)return;
+ data.xp+=n;save();
+ toast('+'+n+' XP kazandın! ⭐');
+ checkBadges();
+}
+function addCoins(n){
+ data.coins+=n;save();
+}
+function awardBadge(id){
+ if(data.badges.includes(id))return;
+ data.badges.push(id);save();
+ toast('Yeni rozet kazandın! 🏅');
+}
+const badgeInfo=[
+ ['first','🎮','İlk Adım','İlk oyununu tamamla.'],
+ ['gamer','🏆','Oyun Tutkunu','10 oyun tamamla.'],
+ ['roaster','💀','Roast Ustası','5 roast üret.'],
+ ['rich','🤑','Zengin Oyuncu','500 XP kazan.'],
+ ['explorer','🕵️','Kaşif','5 farklı sayfa keşfet.'],
+ ['wheel','🎡','Şanslı','Şans çarkını çevir.'],
+ ['collector','🎁','Koleksiyoncu','Günlük sandığı aç.'],
+ ['duelist','⚔️','Düellocu','Bir düelloyu tamamla.'],
+ ['shopper','🛒','Alışverişçi','Marketten eşya al.'],
+ ['secret','🔐','Gizli Ajan','Gizli kodu keşfet.']
+];
+function checkBadges(){
+ if(data.played>=1)awardBadge('first');
+ if(data.played>=10)awardBadge('gamer');
+ if(data.roasts>=5)awardBadge('roaster');
+ if(data.xp>=500)awardBadge('rich');
+ if(data.explored.length>=5)awardBadge('explorer');
+}
+
+// ===================================
+// DUYURU
+// ===================================
+function renderAnnouncement(){
+ if(data.announcement){
+  const box=document.createElement('div');
+  box.className='panel';
+  box.innerHTML='<h3>📢 CEO Duyurusu</h3>';
+  const p=document.createElement('p');
+  p.textContent=data.announcement;
+  box.appendChild(p);
+  document.getElementById('home').insertBefore(box,document.getElementById('home').children[1]);
+ }
+}
+
+// ===================================
+// ROAST
+// ===================================
+const roastLines=[
+ '{n}, senin internet hızın değil, düşüncelerin bile yüklenirken zaman aşımına uğruyor.',
+ '{n}, bilgisayarın seni görünce otomatik olarak uyku moduna geçiyor.',
+ '{n}, Google seni arasa "Bunu mu demek istediniz: hata?" diye sorar.',
+ '{n}, senin planların Windows güncellemesi gibi: hep erteleniyor.',
+ '{n}, zekân o kadar gizli ki kendin bile bulamıyorsun.',
+ '{n}, sen oyunda bot değilsin; botların moralini bozan kişisin.',
+ '{n}, senin şansın o kadar düşük ki zar senden özür diler.',
+ '{n}, beynin arka planda güncelleme yapıyor ama yüzde 1\'de kalmış.',
+ '{n}, senin stratejin o kadar karışık ki satranç tahtası istifa etti.',
+ '{n}, senin fikirlerin hızlı ama uygulama kısmı hâlâ kargoda.',
+ '{n}, alarmın bile seni uyandırmaktan vazgeçmiş.',
+ '{n}, senin bilgisayarındaki hatalar senden daha fazla XP kazanmış.',
+ '{n}, seninle saklambaç oynasak seni aramaya kimse başlamaz.',
+ '{n}, senin oyun performansını gören FPS bile düşüyor.',
+ '{n}, senin planını görünce takvim emekliliğini istedi.',
+ '{n}, senin şarjın değil, motivasyonun yüzde 1.',
+ '{n}, senin klavyen bile senden daha hızlı düşünüyor.',
+ '{n}, seninle yarışan kaplumbağa fotoğraf molası veriyor.'
+];
+function roast(){
+ const name=document.getElementById('roastName').value.trim()||'Sen';
+ let line;
+ do{line=roastLines[Math.floor(Math.random()*roastLines.length)].replaceAll('{n}',name)}
+ while(line===roastLast&&roastLines.length>1);
+ roastLast=line;
+ document.getElementById('roastText').textContent=line;
+ document.getElementById('roastResult').classList.remove('hidden');
+ data.roasts++;addXP(2);
+ checkBadges();
+}
+function copyRoast(){
+ if(!roastLast)return;
+ if(navigator.clipboard&&window.isSecureContext){
+  navigator.clipboard.writeText(roastLast).then(()=>toast('Kopyalandı! 📋')).catch(()=>toast('Kopyalama başarısız.'));
+ }else toast('Metni seçerek kopyalayabilirsin: '+roastLast);
+}
+
+// ===================================
+// OYUN MERKEZİ
+// ===================================
+const games=[
+ ['click','🖱️','Tıklama Ustası','10 saniyede olabildiğince çok tıkla.'],
+ ['quiz','❓','Mini Quiz','Bilgini test et.'],
+ ['guess','🔢','Sayı Tahmini','Gizli sayıyı bul.'],
+ ['rps','✊','Taş Kağıt Makas','Bilgisayara karşı oyna.'],
+ ['math','➕','Matematik Düellosu','İşlemleri çöz.'],
+ ['reaction','⚡','Refleks Testi','Yeşil ışıkta tıkla.'],
+ ['memory','🧠','Hafıza Testi','Sayıları ezberle.'],
+ ['target','🎯','Hedef Vurma','Hedefi yakala.']
+];
+function renderGames(){
+ document.getElementById('gameGrid').innerHTML=games.map(g=>`
+ <div class="card game-card" data-name="${g[2].toLowerCase()}">
+ <div class="emoji">${g[1]}</div><h3>${g[2]}</h3>
+ <p>${g[3]}</p><button class="primary" onclick="startGame('${g[0]}')">OYNA ▶</button>
+ </div>`).join('');
+}
+function filterGames(){
+ let q=document.getElementById('search').value.toLowerCase();
+ document.querySelectorAll('.game-card').forEach(c=>{
+  c.style.display=c.dataset.name.includes(q)?'':'none';
+ });
+}
+function openGame(id){
+ currentGame=id;gameData={};
+ document.getElementById('gameModal').classList.remove('hidden');
+ document.getElementById('gameMessage').textContent='';
+ document.getElementById('gameArea').innerHTML='';
+ document.getElementById('gameTitle').textContent=games.find(g=>g[0]===id)[1]+' '+games.find(g=>g[0]===id)[2];
+}
+function closeGame(){
+ clearInterval(gameTimer);clearTimeout(gameTimer);gameTimer=null;
+ document.getElementById('gameModal').classList.add('hidden');
+}
+function finishGame(points,message){
+ if(gameData.finished)return;
+ gameData.finished=true;
+ clearInterval(gameTimer);clearTimeout(gameTimer);gameTimer=null;
+ data.played++;addXP(points);
+ awardBadge('first');
+ if(data.played>=10)awardBadge('gamer');
+ document.getElementById('gameMessage').textContent=message+' (+'+points+' XP)';
+ updateStats();renderLeaderboard();
+}
+function startGame(id){
+ openGame(id);
+ const area=document.getElementById('gameArea');
+ if(id==='click'){
+  gameData.count=0;gameData.time=10;
+  area.innerHTML='<p>10 saniyede olabildiğince çok tıkla!</p><div class="big" id="clickCount">0</div><button class="primary" id="clickBtn">TIKLA!</button><p id="clickTime">10 saniye</p>';
+  document.getElementById('clickBtn').onclick=()=>{
+   if(!gameData.finished){gameData.count++;document.getElementById('clickCount').textContent=gameData.count}
+  };
+  gameTimer=setInterval(()=>{
+   gameData.time--;
+   document.getElementById('clickTime').textContent=gameData.time+' saniye';
+   if(gameData.time<=0)finishGame(Math.min(50,gameData.count),'Tıklama sayın: '+gameData.count);
+  },1000);
+ }
+ if(id==='quiz'){
+  const qs=[
+   ['Türkiye’nin başkenti?',['İstanbul','Ankara','İzmir'],1],
+   ['Bir haftada kaç gün var?',['5','6','7'],2],
+   ['Güneş yıldız mıdır?',['Evet','Hayır'],0],
+   ['8 x 7 kaçtır?',['54','56','64'],1],
+   ['En büyük okyanus?',['Atlas','Hint','Pasifik'],2]
+  ];
+  gameData.q=qs[Math.floor(Math.random()*qs.length)];
+  area.innerHTML='<h3>'+gameData.q[0]+'</h3>'+gameData.q[1].map((v,i)=>`<button class="secondary" style="margin:5px" onclick="quizAnswer(${i})">${v}</button>`).join('');
+ }
+ if(id==='guess'){
+  gameData.answer=Math.floor(Math.random()*20)+1;gameData.tries=0;
+  area.innerHTML='<p>1 ile 20 arasında sayı tuttum.</p><input type="number" id="guessInput" placeholder="Tahminin"><button class="primary" onclick="guessNumber()">Kontrol et</button><p id="guessHint"></p>';
+ }
+ if(id==='rps'){
+  area.innerHTML='<p>Seçimini yap!</p>'+['Taş','Kağıt','Makas'].map((v,i)=>`<button class="secondary" style="margin:5px" onclick="playRPS(${i})">${['✊','✋','✌️'][i]} ${v}</button>`).join('')+'<p id="rpsResult"></p>';
+ }
+ if(id==='math'){
+  gameData.score=0;gameData.left=5;nextMath();
+ }
+ if(id==='reaction'){
+  area.innerHTML='<p>Yeşil ekranı bekle. Erken tıklama!</p><button id="reactBox" style="width:100%;padding:55px;background:#a52c4b;color:white">BEKLE...</button>';
+  gameData.ready=false;
+  document.getElementById('reactBox').onclick=()=>{
+   if(!gameData.ready){finishGame(0,'Çok erken tıkladın!');return}
+   let ms=Date.now()-gameData.start;
+   finishGame(Math.max(5,Math.round(50-ms/10)),'Tepki süren: '+ms+' ms');
+  };
+  gameTimer=setTimeout(()=>{
+   if(currentGame!=='reaction')return;
+   gameData.ready=true;gameData.start=Date.now();
+   const b=document.getElementById('reactBox');
+   b.style.background='#18834c';b.textContent='ŞİMDİ TIKLA!';
+  },1500+Math.random()*2500);
+ }
+ if(id==='memory'){
+  gameData.seq=Array.from({length:5},()=>Math.floor(Math.random()*9)+1);
+  area.innerHTML='<p>Bu sayıları ezberle!</p><div class="big" id="sequence">'+gameData.seq.join(' - ')+'</div><p id="memHint">4 saniye...</p>';
+  gameTimer=setTimeout(()=>{
+   if(currentGame!=='memory')return;
+   document.getElementById('sequence').textContent='? - ? - ? - ? - ?';
+   document.getElementById('memHint').innerHTML='<input id="memoryAnswer" placeholder="Sayıları boşlukla yaz"><button class="primary" onclick="checkMemory()">Kontrol</button>';
+  },4000);
+ }
+ if(id==='target'){
+  gameData.score=0;
+  area.innerHTML='<p>10 hedefe tıkla!</p><p id="targetScore">0 / 10</p><button id="targetBtn" class="primary" onclick="hitTarget()">🎯 HEDEF</button>';
+  moveTarget();
+ }
+}
+function quizAnswer(i){
+ let ok=i===gameData.q[2];
+ finishGame(ok?25:0,ok?'Doğru cevap!':'Yanlış cevap!');
+}
+function guessNumber(){
+ let v=Number(document.getElementById('guessInput').value);
+ if(!v||v<1||v>20)return;
+ gameData.tries++;
+ if(v===gameData.answer)finishGame(Math.max(5,35-gameData.tries*5),'Bildin! Sayı '+v);
+ else document.getElementById('guessHint').textContent=v<gameData.answer?'Daha büyük!':'Daha küçük!';
+}
+function playRPS(i){
+ let c=Math.floor(Math.random()*3),names=['Taş','Kağıt','Makas'];
+ let result=i===c?'Berabere!':(i-c+3)%3===1?'Kazandın!':'Kaybettin!';
+ document.getElementById('rpsResult').textContent='Sen: '+names[i]+' / Bilgisayar: '+names[c]+' / '+result;
+ finishGame(result==='Kazandın!'?25:result==='Berabere!'?10:0,result);
+}
+function nextMath(){
+ let a=Math.floor(Math.random()*15)+1,b=Math.floor(Math.random()*15)+1;
+ gameData.answer=a+b;
+ document.getElementById('gameArea').innerHTML=
+ `<p>${gameData.score+1}. soru / 5</p><div class="big">${a} + ${b} = ?</div><input id="mathAnswer" type="number"><button class="primary" onclick="checkMath()">Cevapla</button>`;
+}
+function checkMath(){
+ if(Number(document.getElementById('mathAnswer').value)===gameData.answer)gameData.score++;
+ gameData.left--;
+ if(gameData.left<=0)finishGame(gameData.score*10,'Doğru sayın: '+gameData.score+'/5');
+ else nextMath();
+}
+function checkMemory(){
+ let a=document.getElementById('memoryAnswer').value.trim().split(/\s+/).map(Number);
+ let ok=a.join(',')===gameData.seq.join(',');
+ finishGame(ok?40:0,ok?'Hafızan harika!':'Cevap: '+gameData.seq.join(' '));
+}
+function moveTarget(){
+ let b=document.getElementById('targetBtn');if(!b)return;
+ b.style.marginLeft=(Math.random()*120-60)+'px';
+ b.style.marginTop=(Math.random()*25)+'px';
+}
+function hitTarget(){
+ gameData.score++;
+ document.getElementById('targetScore').textContent=gameData.score+' / 10';
+ if(gameData.score>=10)finishGame(40,'10 hedefi de vurdun!');
+ else moveTarget();
+}
+
+// ===================================
+// GÜNLÜK ÖDÜL SANDIĞI
+// ===================================
+function updateRewardButtons(){
+ let done=data.chestDate===today();
+ document.getElementById('chestBtn').disabled=done;
+ document.getElementById('chestBtn').textContent=done?'YARIN TEKRAR GEL':'SANDIĞI AÇ';
+ document.getElementById('chestResult').classList.toggle('hidden',!done);
+ if(done)document.getElementById('chestResult').textContent='Bugünkü sandığını açtın. Yarın tekrar gel!';
+ document.getElementById('wheelBtn').disabled=data.wheelDate===today();
+ document.getElementById('wheelBtn').textContent=data.wheelDate===today()?'YARIN TEKRAR ÇEVİR':'ÇARKI ÇEVİR!';
+}
+function openChest(){
+ if(data.chestDate===today())return toast('Bugünkü sandığını zaten açtın!');
+ let xp=20+Math.floor(Math.random()*31);
+ let coins=10+Math.floor(Math.random()*21);
+ data.chestDate=today();data.coins+=coins;data.xp+=xp;
+ document.getElementById('chestResult').classList.remove('hidden');
+ document.getElementById('chestResult').textContent='🎉 '+xp+' XP ve '+coins+' altın kazandın!';
+ awardBadge('collector');save();updateRewardButtons();
+}
+function spinWheel(){
+ if(wheelBusy||data.wheelDate===today())return;
+ wheelBusy=true;
+ const rewards=[10,20,30,50,75,100,15,40];
+ let result=rewards[Math.floor(Math.random()*rewards.length)];
+ const wheel=document.getElementById('wheel');
+ wheel.style.transform='rotate('+(1440+Math.random()*360)+'deg)';
+ setTimeout(()=>{
+  data.wheelDate=today();data.xp+=result;
+  document.getElementById('wheelResult').textContent='🎉 '+result+' XP kazandın!';
+  wheelBusy=false;awardBadge('wheel');save();updateRewardButtons();
+ },2500);
+}
+
+// ===================================
+// LİDERLİK TABLOSU
+// ===================================
+function getPlayers(){
+ try{return JSON.parse(localStorage.getItem('moePlayers')||'[]')}
+ catch(e){return []}
+}
+function savePlayer(){
+ let players=getPlayers();
+ let p=players.find(x=>x.name===data.name);
+ if(!p){p={name:data.name,xp:0};players.push(p)}
+ p.xp=data.xp;
+ localStorage.setItem('moePlayers',JSON.stringify(players));
+}
+function renderLeaderboard(){
+ savePlayer();
+ let players=getPlayers().sort((a,b)=>b.xp-a.xp);
+ document.getElementById('leaderRows').innerHTML=players.map((p,i)=>
+ `<tr><td>${i===0?'🥇':i===1?'🥈':i===2?'🥉':i+1}</td><td>${escapeHTML(p.name)}</td><td>${p.xp}</td><td>${Math.floor(p.xp/100)+1}</td></tr>`
+ ).join('')||'<tr><td colspan="4">Henüz oyuncu yok.</td></tr>';
+ document.getElementById('playerName').value=data.name;
+}
+function changeName(){
+ let name=document.getElementById('playerName').value.trim().slice(0,20);
+ if(!name)return toast('Bir isim yaz!');
+ data.name=name;save();savePlayer();toast('İsmin değiştirildi!');
+}
+function escapeHTML(s){
+ return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+// ===================================
+// ROZETLER
+// ===================================
+function renderBadges(){
+ document.getElementById('badgeGrid').innerHTML=badgeInfo.map(b=>{
+ let got=data.badges.includes(b[0]);
+ return `<div class="card" style="opacity:${got?1:.45}">
+ <div class="emoji">${b[1]}</div><h3>${b[2]}</h3>
+ <p>${b[3]}</p><span class="badge">${got?'✅ Kazanıldı':'🔒 Kilitli'}</span>
+ </div>`;
+ }).join('');
+}
+
+// ===================================
+// XP MARKETİ
+// ===================================
+const products=[
+ {id:'purple',name:'Mor Profil Teması',emoji:'💜',price:50,desc:'Mor profil görünümü.'},
+ {id:'fire',name:'Ateşli Avatar',emoji:'🔥',price:100,desc:'Ateşli bir profil havası.'},
+ {id:'diamond',name:'Elmas Unvanı',emoji:'💎',price:150,desc:'Özel Elmas oyuncu unvanı.'},
+ {id:'crown',name:'Altın Taç',emoji:'👑',price:250,desc:'Kral gibi görün.'},
+ {id:'rainbow',name:'Gökkuşağı Tema',emoji:'🌈',price:350,desc:'Renkli profil teması.'}
+];
+function renderShop(){
+ document.getElementById('shopXP').textContent=data.xp;
+ document.getElementById('shopGrid').innerHTML=products.map(p=>{
+ let owned=data.owned.includes(p.id);
+ return `<div class="card">
+ <div class="emoji">${p.emoji}</div><h3>${p.name}</h3>
+ <p>${p.desc}</p><span class="badge">⭐ ${p.price} XP</span>
+ <button class="${owned?'secondary':'primary'}" ${owned?'disabled':''} onclick="buyItem('${p.id}')">${owned?'SAHİPSİN':'SATIN AL'}</button>
+ </div>`;
+ }).join('');
+}
+function buyItem(id){
+ let p=products.find(x=>x.id===id);
+ if(!p||data.owned.includes(id))return;
+ if(data.xp<p.price)return toast('Yeterli XP yok!');
+ data.xp-=p.price;data.owned.push(id);
+ awardBadge('shopper');save();renderShop();
+ toast(p.name+' satın alındı!');
+}
+
+// ===================================
+// AVATAR DÜZENLEYİCİ
+// ===================================
+const avatars=['😎','🦊','🐱','🐸','🐼','🐲','🤖','👻','🦁','🐵','👑','🚀','🧙','🥷','🐺','🦄'];
+let selectedAvatar=data.avatar;
+function renderAvatars(){
+ selectedAvatar=data.avatar;
+ document.getElementById('avatarPreview').textContent=selectedAvatar;
+ document.getElementById('avatarOptions').innerHTML=avatars.map(a=>
+ `<div class="card center" style="min-height:80px;padding:10px">
+ <button style="font-size:35px;background:transparent" onclick="selectAvatar('${a}')">${a}</button>
+ </div>`).join('');
+}
+function selectAvatar(a){
+ selectedAvatar=a;document.getElementById('avatarPreview').textContent=a;
+}
+function saveAvatar(){
+ data.avatar=selectedAvatar;save();toast('Avatar kaydedildi! 👤');
+}
+
+// ===================================
+// GÜNLÜK GÖREVLER
+// ===================================
+function prepareQuests(){
+ if(data.questsDate!==today()){
+  data.questsDate=today();
+  data.questProgress={games:0,roasts:0,spins:0};
+  data.questClaimed=[];
+  save();
+ }
+ if(!data.questClaimed)data.questClaimed=[];
+}
+const quests=[
+ {id:'games',name:'🎮 2 oyun tamamla',target:2,reward:40},
+ {id:'roasts',name:'💀 3 roast üret',target:3,reward:25},
+ {id:'spins',name:'🎡 Şans çarkını çevir',target:1,reward:30}
+];
+function progressQuest(id){
+ prepareQuests();
+ data.questProgress[id]=(data.questProgress[id]||0)+1;
+ save();
+}
+function renderQuests(){
+ prepareQuests();
+ document.getElementById('questList').innerHTML=quests.map(q=>{
+ let n=data.questProgress[q.id]||0;
+ let claimed=data.questClaimed.includes(q.id);
+ let done=n>=q.target;
+ return `<div class="panel">
+ <div class="row"><div><h3>${q.name}</h3>
+ <p class="muted">${Math.min(n,q.target)} / ${q.target} · Ödül: ${q.reward} XP</p>
+ <div class="progress"><div style="width:${Math.min(100,n/q.target*100)}%"></div></div>
+ </div><div style="flex:0 0 auto">
+ <button class="${claimed?'secondary':'primary'}" ${!done||claimed?'disabled':''} onclick="claimQuest('${q.id}')">${claimed?'ALINDI':'ÖDÜLÜ AL'}</button>
+ </div></div></div>`;
+ }).join('');
+}
+function claimQuest(id){
+ prepareQuests();
+ let q=quests.find(x=>x.id===id);
+ if(!q||data.questClaimed.includes(id)||(data.questProgress[id]||0)<q.target)return;
+ data.questClaimed.push(id);addXP(q.reward);renderQuests();
+}
+function renderHomeQuests(){
+ prepareQuests();
+ document.getElementById('homeQuests').innerHTML=quests.map(q=>{
+ let n=data.questProgress[q.id]||0;
+ return `<p>${q.name}: <b>${Math.min(n,q.target)}/${q.target}</b></p>`;
+ }).join('')+'<button class="primary" onclick="page(\'quests\')">Tüm görevleri gör</button>';
+}
+
+// ===================================
+// DÜELLO - AYNI CİHAZDA
+// ===================================
+function startDuel(){
+ let p1=document.getElementById('duelP1').value.trim()||'Oyuncu 1';
+ let p2=document.getElementById('duelP2').value.trim()||'Oyuncu 2';
+ duel={names:[p1,p2],scores:[0,0],turn:0,question:0,finished:false};
+ nextDuel();
+}
+function nextDuel(){
+ const area=document.getElementById('duelArea');
+ if(duel.question>=5){
+  duel.finished=true;
+  let winner=duel.scores[0]===duel.scores[1]?'Berabere!':duel.scores[0]>duel.scores[1]?duel.names[0]+' kazandı!':duel.names[1]+' kazandı!';
+  area.innerHTML=`<h2>🏆 ${winner}</h2><p>${duel.names[0]}: ${duel.scores[0]} puan</p><p>${duel.names[1]}: ${duel.scores[1]} puan</p><button class="primary" onclick="startDuel()">YENİ DÜELLO</button>`;
+  awardBadge('duelist');addXP(30);
+  return;
+ }
+ let a=Math.floor(Math.random()*10)+1,b=Math.floor(Math.random()*10)+1;
+ duel.answer=a+b;
+ area.innerHTML=`
+ <h2>Sıra: ${escapeHTML(duel.names[duel.turn])}</h2>
+ <p>Soru ${duel.question+1}/5</p>
+ <div class="big">${a} + ${b} = ?</div>
+ <input id="duelAnswer" type="number" placeholder="Cevabın">
+ <button class="primary" onclick="duelAnswer()">CEVAPLA</button>
+ <p>${escapeHTML(duel.names[0])}: ${duel.scores[0]} puan · ${escapeHTML(duel.names[1])}: ${duel.scores[1]} puan</p>`;
+}
+function duelAnswer(){
+ let answer=Number(document.getElementById('duelAnswer').value);
+ if(answer===duel.answer)duel.scores[duel.turn]++;
+ duel.turn=1-duel.turn;duel.question++;
+ nextDuel();
+}
+
+// ===================================
+// GİZLİ GÖREVLER
+// ===================================
+function checkSecret(){
+ let code=document.getElementById('secretCode').value.trim().toUpperCase();
+ if(code==='EGEALL667'){
+  if(!data.badges.includes('secret')){
+   awardBadge('secret');addXP(100);
+  }
+  document.getElementById('secretMessage').textContent='🔓 GİZLİ AJAN! 100 XP kazandın!';
+ }else toast('Yanlış kod! Tekrar dene.');
+}
+function checkExplore(){
+ if(data.explored.length>=5){
+  awardBadge('explorer');addXP(25);
+  document.getElementById('secretMessage').textContent='Harika! Kaşif görevini tamamladın.';
+ }else{
+  document.getElementById('secretMessage').textContent='Henüz '+data.explored.length+'/5 sayfa keşfettin.';
+ }
+}
+function checkRoastQuest(){
+ if(data.roasts>=5){
+  awardBadge('roaster');addXP(25);
+  document.getElementById('secretMessage').textContent='Roast ustası oldun!';
+ }else{
+  document.getElementById('secretMessage').textContent='Henüz '+data.roasts+'/5 roast ürettin.';
+ }
+}
+
+// ===================================
+// CEO PANELİ
+// ===================================
+function openCEO(){
+ let pass=prompt('👑 CEO giriş kodu:');
+ if(pass==='EGEALL667'){
+  page('ceo');
+  toast('CEO paneline hoş geldin!');
+ }else if(pass!==null)toast('Hatalı kod!');
+}
+function adminAddXP(){
+ let n=Number(document.getElementById('adminXP').value);
+ if(!Number.isFinite(n)||n<=0||n>10000)return toast('1 ile 10000 arasında XP gir.');
+ data.xp+=Math.floor(n);save();
+ toast('XP eklendi!');
+}
+function setAnnouncement(){
+ let s=document.getElementById('announcementInput').value.trim();
+ if(!s)return toast('Duyuru yaz!');
+ data.announcement=s.slice(0,200);save();
+ toast('Duyuru yayınlandı!');
+}
+function renderAdminStats(){
+ document.getElementById('adminStats').textContent=
+ 'XP: '+data.xp+' | Oyun: '+data.played+' | Rozet: '+data.badges.length;
+}
+function resetData(){
+ if(!confirm('Bütün oyun verilerin silinsin mi?'))return;
+ localStorage.removeItem(KEY);
+ localStorage.removeItem('moePlayers');
+ location.reload();
+}
+
+// ===================================
+// BAŞLANGIÇ
+// ===================================
+prepareQuests();
+renderGames();
+updateStats();
+renderAnnouncement();
+updateRewardButtons();
+renderHomeQuests();
+</script>
+</body>
+</html>
